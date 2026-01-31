@@ -5,6 +5,10 @@ from oauth2client.service_account import ServiceAccountCredentials
 import os
 from dotenv import load_dotenv
 
+
+port = os.getenv("PORT") if os.getenv("PORT") else 4000 
+
+
 load_dotenv()
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
