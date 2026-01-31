@@ -5,9 +5,23 @@ from oauth2client.service_account import ServiceAccountCredentials
 import os
 from dotenv import load_dotenv
 
+from flask import Flask
+from threading import Thread
 
-port = os.getenv("PORT") if os.getenv("PORT") else 4000 
+app = Flask("")
 
+@app.route("/")
+def home():
+    return "Bot is running!"
+
+def run():
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+
+# Start Flask server in background thread
+Thread(target=run).start()
+
+bot = commands.Bot(command_prefix="!")
 
 load_dotenv()
 
