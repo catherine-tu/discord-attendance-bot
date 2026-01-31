@@ -6,20 +6,20 @@ import os
 from dotenv import load_dotenv
 
 from flask import Flask
-from threading import Thread
+# from threading import Thread
 
-app = Flask("")
+# app = Flask("")
 
-@app.route("/")
-def home():
-    return "Bot is running!"
+# @app.route("/")
+# def home():
+#     return "Bot is running!"
 
-def run():
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+# def run():
+#     port = int(os.environ.get("PORT", 5000))
+#     app.run(host="0.0.0.0", port=port)
 
-# Start Flask server in background thread
-Thread(target=run).start()
+# # Start Flask server in background thread
+# Thread(target=run).start()
 
 bot = commands.Bot(command_prefix="!")
 
