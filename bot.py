@@ -21,7 +21,9 @@ from dotenv import load_dotenv
 # # Start Flask server in background thread
 # Thread(target=run).start()
 
-bot = commands.Bot(command_prefix="!")
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 load_dotenv()
 
