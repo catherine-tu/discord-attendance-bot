@@ -101,10 +101,20 @@ async def on_message(message):
     sheet.update_cell(row, col, sheet_value)
 
     await message.add_reaction("✅")
-    await message.reply(
+
+    response = (
         f"Marked **{name}** as **{sheet_value}** on **{date}**.\n"
         f"Reason: {reason}"
     )
+
+    # Extra reminder for absences
+    if status_key == "absent":
+        response += (
+            "\n\n❗ **Please make sure to send your recordings "
+            "to make up this absence.**"
+        )
+
+    await message.reply(response)
 
 
 bot.run(DISCORD_TOKEN)
