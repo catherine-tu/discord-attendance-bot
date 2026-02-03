@@ -64,13 +64,13 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    if message.channel.name != LOG_ABSENCE_CHANNEL or message.channel.name != TWIG_ABSENCE_CHANNEL:
+    if message.channel.name not in {LOG_ABSENCE_CHANNEL, TWIG_ABSENCE_CHANNEL}:
         return
 
     content = message.content.strip().split()
 
     # Expected:
-    # !absence first_name absent 2/4 sick
+    # !attendance first_name absent 2/4 sick
     if len(content) < 5 or content[0] not in {"!attendance"}:
         await message.reply(
             "❌ Format: `!attendance first_name absent/late date reason`")
@@ -119,8 +119,11 @@ async def on_message(message):
 
     # Extra reminder for absences
     if status_key == "absent":
-        response += ("\n\n❗ **Please make sure to send your recordings "
-                     "to make up this absence.**")
+        response += (
+            "\n\n❗ **Please make sure to send your recordings to make up this absence.**\n"
+            "• Send **privately** if related to jobs, academics (tests), sickness, "
+            "or if it was communicated a month in advance.\n"
+            "• Otherwise, send them in **#absences-makeup**.")
 
     await message.reply(response)
 
