@@ -44,8 +44,11 @@ scope = [
 # )
 import json
 
-creds_dict = json.loads(os.environ["GOOGLE_CREDS_JSON"])
-creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+# creds_dict = json.loads(os.environ["GOOGLE_CREDS_JSON"])
+# creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(
+    "credentials.json", scope
+)
 client = gspread.authorize(creds)
 sheet = client.open(SHEET_NAME).sheet1
 
@@ -61,11 +64,15 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
+    # @bot.event
+    # async def on_message(message):
+    #     print("GOT MESSAGE EVENT")
+        
     if message.author.bot:
         return
 
-    if message.channel.name not in {LOG_ABSENCE_CHANNEL, TWIG_ABSENCE_CHANNEL}:
-        return
+    # if message.channel.name not in {LOG_ABSENCE_CHANNEL, TWIG_ABSENCE_CHANNEL}:
+    #     return
 
     content = message.content.strip().split()
 
@@ -126,6 +133,8 @@ async def on_message(message):
             "• Otherwise, send them in **#absences-makeup**.")
 
     await message.reply(response)
+    # await bot.process_commands(message)
+
 
 
 from flask import Flask
