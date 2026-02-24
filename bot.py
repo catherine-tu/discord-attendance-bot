@@ -62,42 +62,24 @@ async def on_ready():
     print(f"Logged in as {bot.user}")
 
 
-@bot.event
-async def on_message(message):
-    # @bot.event
-    # async def on_message(message):
-    #     print("GOT MESSAGE EVENT")
-        
-    if message.author.bot:
-        return
-
-    # if message.channel.name not in {LOG_ABSENCE_CHANNEL, TWIG_ABSENCE_CHANNEL}:
+@bot.command(name="attendance")
+async def attendance(ctx, first_name: str = None, status: str = None, date: str = None, *, reason: str = None):
+    # if not all([first_name, status, date, reason]):
+    #     await ctx.reply("❌ Format: `!attendance first_name absent/late date reason`")
     #     return
-
-    content = message.content.strip().split()
-
-    # Expected:
-    # !attendance first_name absent 2/4 sick
-    if len(content) < 5 or content[0] not in {"!attendance"}:
-        await message.reply(
-            "❌ Format: `!attendance first_name absent/late date reason`")
-        return
 
     STATUS_MAP = {
         "late": "Will Be Late",
         "absent": "Must Send Recording",
     }
 
-    _, first_name, status, date, *reason = content
-    reason = " ".join(reason)
-
     status_key = status.lower()
 
     if status_key not in STATUS_MAP:
-        await message.channel.send("❌ Status must be `late` or `absent`.")
+        await ctx.reply("❌ Status must be `late` or `absent`.")
         return
 
-    sheet_value = STATUS_MAP[status_key]  # Absent / Late
+    sheet_value = STATUS_MAP[status_key]
     name = first_name.capitalize()
 
     # ---- Find student row ----
@@ -105,13 +87,13 @@ async def on_message(message):
         names = sheet.col_values(1)
         row = names.index(name) + 1
     except ValueError:
-        await message.reply(f"❌ Could not find `{name}` in the sheet.")
+        await ctx.reply(f"❌ Could not find `{name}` in the sheet.")
         return
 
     # ---- Find date column ----
     headers = sheet.row_values(1)
     if date not in headers:
-        await message.reply(f"❌ Date `{date}` not found in sheet.")
+        await ctx.reply(f"❌ Date `{date}` not found in sheet.")
         return
 
     col = headers.index(date) + 1
@@ -119,21 +101,22 @@ async def on_message(message):
     # ---- Update sheet ----
     sheet.update_cell(row, col, sheet_value)
 
-    await message.add_reaction("✅")
+    await ctx.message.add_reaction("✅")
 
-    response = (f"Marked **{name}** as **{sheet_value}** on **{date}**.\n"
-                f"Reason: {reason}")
+    response = (
+        f"Marked **{name}** as **{sheet_value}** on **{date}**.\n"
+        f"Reason: {reason}"
+    )
 
-    # Extra reminder for absences
     if status_key == "absent":
         response += (
             "\n\n❗ **Please make sure to send your recordings to make up this absence.**\n"
-            "• Send **privately** if related to jobs, academics (tests), sickness, "
+            "• Send privately if related to jobs, academics (tests), sickness, "
             "or if it was communicated a month in advance.\n"
-            "• Otherwise, send them in **#absences-makeup**.")
+            "• Otherwise, send them in #absences-makeup."
+        )
 
-    await message.reply(response)
-    # await bot.process_commands(message)
+    await ctx.reply(response)
 
 
 
