@@ -30,9 +30,6 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 SHEET_NAME = os.getenv("SHEET_NAME")
 
-LOG_ABSENCE_CHANNEL = "log-absences"
-TWIG_ABSENCE_CHANNEL = "twig-absences"
-
 # ---- Google Sheets setup ----
 scope = [
     "https://spreadsheets.google.com/feeds",
@@ -136,7 +133,7 @@ def run():
     port = int(os.environ.get("PORT", 3000))
     app.run(host="0.0.0.0", port=port)
 
-
 Thread(target=run).start()
 
 bot.run(DISCORD_TOKEN)
+
